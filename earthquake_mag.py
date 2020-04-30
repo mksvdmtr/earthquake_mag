@@ -48,4 +48,5 @@ for i, d in enumerate(data_json['features']):
     print(f"{number}. Place: {place}. Magnitude: {magnitude}")
 
 
+db_conn.commit()
 db_conn.close()
