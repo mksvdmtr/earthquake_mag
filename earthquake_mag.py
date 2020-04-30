@@ -33,20 +33,31 @@ data = requests.get(url, headers={'Accept': 'application/json'},
 
 data_json = data.json()
 
-db_conn = sqlite3.connect("earthquakes.db")
-cursor = db_conn.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS earthquakes (number INT, place TEXT, magnitude REAL)")
+def write_to_db(data):
+    """
+    :param data: response from requests.get()
+    """
+    db_conn = sqlite3.connect("earthquakes.db")
+    cursor = db_conn.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS earthquakes (number INT, place TEXT, magnitude REAL)")
 
-for i, d in enumerate(data_json['features']):
+    for i, d in enumerate(data['features']):
 
-    number = i + 1
-    place = d['properties']['place']
-    magnitude = d['properties']['mag']
-    insert = "INSERT INTO earthquakes VALUES (?, ?, ?);"
-    cursor.execute(insert, (number, place, magnitude))
+        number = i + 1
+        place = d['properties']['place']
+        magnitude = d['properties']['mag']
+        insert = "INSERT INTO earthquakes VALUES (?, ?, ?);"
+        cursor.execute(insert, (number, place, magnitude))
 
-    print(f"{number}. Place: {place}. Magnitude: {magnitude}")
+    db_conn.commit()
+    db_conn.close()
 
+def print_to_screen(data):
+    for i, d in enumerate(data['features']):
+        number = i + 1
+        place = d['properties']['place']
+        magnitude = d['properties']['mag']
+        print(f"{number}. Place: {place}. Magnitude: {magnitude}")
 
-db_conn.commit()
-db_conn.close()
+#print_to_screen(data_json)
+write_to_db(data_json)
