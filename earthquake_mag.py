@@ -52,12 +52,12 @@ def write_to_db(data):
     db_conn.commit()
     db_conn.close()
 
-def print_to_screen(data):
-    for i, d in enumerate(data['features']):
-        number = i + 1
-        place = d['properties']['place']
-        magnitude = d['properties']['mag']
-        print(f"{number}. Place: {place}. Magnitude: {magnitude}")
+def read_from_db():
+    db_conn = sqlite3.connect("earthquakes.db")
+    c = db_conn.cursor()
+    c.execute("SELECT * FROM earthquakes WHERE magnitude > 6;")
+    for row in c.fetchall():
+        print(row)
 
-#print_to_screen(data_json)
 write_to_db(data_json)
+read_from_db()
